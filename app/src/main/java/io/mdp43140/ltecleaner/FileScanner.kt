@@ -34,6 +34,19 @@ class FileScanner(private val path: File, context: Context){
 	private var guiScanProgressMax = 0
 	private var guiScanProgressProgress = 0
 	private var foundFiles: ArrayList<File>? = null
+	private var shizuku: IFileService? = null
+
+	/**
+	 * Lists a folder. Android/data and Android/obb go through Shizuku when it's available,
+	 * everything else uses normal file access.
+	 */
+	private fun listChildren(dir: File): Array<File>? {
+		if (dir is ShizukuFile) return dir.listFiles()
+		if (shizuku != null && ShizukuHelper.isRestricted(dir)) {
+			return ShizukuFile(dir.absolutePath, true, 0L).listFiles()
+		}
+		return dir.listFiles()
+	}
 
 	/**
 	 * Used to generate a list of all files on device
@@ -42,7 +55,7 @@ class FileScanner(private val path: File, context: Context){
 	 */
 	private fun getListFiles(parentDirectory: File): ArrayList<File> {
 		val inFiles = ArrayList<File>()
-		val files = parentDirectory.listFiles()
+		val files = listChildren(parentDirectory)
 		if (files != null) {
 			for (file in files) {
 				if (file != null && !isWhiteListed(file)) { // hopefully to fix crashes on a very limited number of devices && won't touch if whitelisted
@@ -196,6 +209,7 @@ class FileScanner(private val path: File, context: Context){
 
 	fun start(): Long {
 		isRunning = true
+		shizuku = ShizukuHelper.get(context) // null if Shizuku isn't running/granted
 		var cycles: Byte = 0
 		val maxCycles: Byte = if (delete) prefs.multiRun.toByte() else 1
 
@@ -217,11 +231,15 @@ class FileScanner(private val path: File, context: Context){
 					if (delete){
 						++filesRemoved
 						// deletion
-						val isDeleted = if (file.isDirectory) file.deleteRecursively() else file.delete()
+						val isDeleted = when {
+							file is ShizukuFile -> file.deleteRemote()
+							file.isDirectory -> file.deleteRecursively()
+							else -> file.delete()
+						}
 						// failed to remove file and the textView is visible (not null)
 						if (!isDeleted){
 							// error effect - red looks too concerning
-							tv!!.setTextColor(Color.GRAY)
+							tv?.setTextColor(Color.GRAY)
 						}
 					}
 				}

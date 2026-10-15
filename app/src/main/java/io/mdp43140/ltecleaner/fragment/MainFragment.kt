@@ -85,6 +85,7 @@ class MainFragment: BaseFragment(){
 	fun analyze(){
 		if (!FileScanner.isRunning){
 			requestWriteExternalPermission()
+			io.mdp43140.ltecleaner.ShizukuHelper.requestPermissionIfNeeded()
 			scan(false)
 		}
 	}
@@ -95,6 +96,7 @@ class MainFragment: BaseFragment(){
 	fun clean() {
 		if (!FileScanner.isRunning) {
 			requestWriteExternalPermission()
+			io.mdp43140.ltecleaner.ShizukuHelper.requestPermissionIfNeeded()
 			if (App.prefs == null) println("prefs is null!")
 			if (App.prefs!!.oneClick){
 				scan(true) // one-click enabled

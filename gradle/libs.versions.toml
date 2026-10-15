@@ -13,6 +13,7 @@ androidxTestUiautomator = "2.3.0"
 androidxWork = "2.11.2"
 leakcanary = "2.14"
 material = "1.14.0"
+shizuku = "13.1.5"
 
 [libraries]
 ael-kt = { group = "com.github.mdp43140.ael", name = "ael_kt", version.ref = "ael" }
@@ -28,6 +29,8 @@ androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiaut
 androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+shizuku-api = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku" }
+shizuku-provider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -79,6 +79,7 @@ configure<ApplicationExtension> {
 	}
 	buildFeatures {
 		buildConfig = false
+		aidl = true
 		compose = false
 		viewBinding = true
 	}
@@ -135,6 +136,9 @@ dependencies {
 	implementation(libs.material)
 	// Leak detection
 	debugImplementation(libs.leakcanary.android)
+	// Shizuku (access to Android/data and Android/obb on Android 11+)
+	implementation(libs.shizuku.api)
+	implementation(libs.shizuku.provider)
 	// Error logger
 	implementation(libs.ael.kt)
 	// baseline profile

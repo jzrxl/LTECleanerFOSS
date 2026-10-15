@@ -15,3 +15,8 @@
 
 # Needed just for androidx.preference.PreferenceManager
 -renamesourcefileattribute SourceFile
+
+# Shizuku UserService: instantiated reflectively inside the Shizuku process
+-keep class io.mdp43140.ltecleaner.FileService { <init>(); }
+-keep class io.mdp43140.ltecleaner.IFileService { *; }
+-keep class io.mdp43140.ltecleaner.IFileService$Stub { *; }
