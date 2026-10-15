@@ -33,6 +33,7 @@ import io.mdp43140.ltecleaner.CommonFunctions
 import io.mdp43140.ltecleaner.MainActivity
 import io.mdp43140.ltecleaner.ScheduledWorker.Companion.enqueueWork
 import io.mdp43140.ltecleaner.R
+import io.mdp43140.ltecleaner.ShizukuHelper
 class SettingsFragment: PreferenceFragmentCompat(){
 	private val importFileLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
 		if (uri != null){
@@ -130,6 +131,20 @@ class SettingsFragment: PreferenceFragmentCompat(){
 			})
 			true
 		}
+		findPreference<Preference>("shizuku_status")!!.setOnPreferenceClickListener {
+			when (ShizukuHelper.state()){
+				ShizukuHelper.State.READY -> {}
+				ShizukuHelper.State.NO_PERMISSION -> ShizukuHelper.requestPermissionIfNeeded(true)
+				else -> openShizukuApp()
+			}
+			updateShizukuStatus()
+			false
+		}
+		findPreference<Preference>("use_shizuku")!!.setOnPreferenceChangeListener { _:Preference, _:Any? ->
+			updateShizukuStatus()
+			true
+		}
+		updateShizukuStatus()
 		findPreference<Preference>("data_import")!!.setOnPreferenceClickListener {
 			importFileLauncher.launch(arrayOf("application/json"))
 			false
@@ -138,6 +153,24 @@ class SettingsFragment: PreferenceFragmentCompat(){
 			exportFileLauncher.launch("LTECleaner_settings.json")
 			false
 		}
+	}
+	override fun onResume(){
+		super.onResume()
+		updateShizukuStatus() // coming back from Shizuku's permission prompt or the Shizuku app
+	}
+	private fun updateShizukuStatus(){
+		val pref = findPreference<Preference>("shizuku_status") ?: return
+		pref.setSummary(when (ShizukuHelper.state()){
+			ShizukuHelper.State.READY -> R.string.shizuku_status_ready
+			ShizukuHelper.State.NO_PERMISSION -> R.string.shizuku_status_no_permission
+			ShizukuHelper.State.DENIED -> R.string.shizuku_status_denied
+			ShizukuHelper.State.NOT_RUNNING -> R.string.shizuku_status_not_running
+		})
+	}
+	private fun openShizukuApp(){
+		val intent = requireContext().packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
+		if (intent != null) startActivity(intent)
+		else Toast.makeText(requireContext(), R.string.shizuku_not_installed, Toast.LENGTH_SHORT).show()
 	}
 	override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 		setPreferencesFromResource(R.xml.preferences,rootKey)

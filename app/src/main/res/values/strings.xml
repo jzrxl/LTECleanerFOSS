@@ -33,6 +33,15 @@
 	<string name="corpse_summary">Files left over from uninstalled apps</string>
 	<string name="corpse_title">Delete corpse files</string>
 	<string name="other">Other</string>
+	<string name="shizuku_category_title">Shizuku</string>
+	<string name="use_shizuku_title">Use Shizuku</string>
+	<string name="use_shizuku_sum">Lets the cleaner scan and delete files in Android/data and Android/obb, which Android 11+ blocks for normal apps</string>
+	<string name="shizuku_status_title">Shizuku status</string>
+	<string name="shizuku_status_ready">Connected. Android/data and Android/obb will be cleaned</string>
+	<string name="shizuku_status_no_permission">Shizuku is running, but this app isn\'t allowed yet. Tap to allow</string>
+	<string name="shizuku_status_denied">Permission was denied. In Shizuku, open Authorized apps and allow this app. Tap to open Shizuku</string>
+	<string name="shizuku_status_not_running">Shizuku isn\'t running. Start it, then come back. Tap to open Shizuku</string>
+	<string name="shizuku_not_installed">Shizuku isn\'t installed</string>
 	<string name="clean_boot_title">Clean on boot</string>
 	<string name="clean_boot_sum">Automatically runs when device completed boot, without having to open the app.</string>
 	<string name="clean_hourly_title">Hourly Clean</string>

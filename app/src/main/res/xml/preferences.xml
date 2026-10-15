@@ -100,6 +100,19 @@
 			android:title="@string/delete_apk_files"
 			app:iconSpaceReserved="false" />
 	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/shizuku_category_title" app:iconSpaceReserved="false">
+		<SwitchPreferenceCompat
+			android:defaultValue="true"
+			android:key="use_shizuku"
+			android:persistent="true"
+			android:summary="@string/use_shizuku_sum"
+			android:title="@string/use_shizuku_title"
+			app:iconSpaceReserved="false" />
+		<Preference
+			android:key="shizuku_status"
+			android:title="@string/shizuku_status_title"
+			app:iconSpaceReserved="false" />
+	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/other" app:iconSpaceReserved="false">
 		<ListPreference
 			android:key="theme"

@@ -20,6 +20,18 @@ object ShizukuHelper {
 	private var args: Shizuku.UserServiceArgs? = null
 	private var conn: ServiceConnection? = null
 
+	enum class State { NOT_RUNNING, NO_PERMISSION, DENIED, READY }
+
+	/** Used by the settings screen to show what's going on */
+	fun state(): State = try {
+		when {
+			!Shizuku.pingBinder() || Shizuku.isPreV11() -> State.NOT_RUNNING
+			Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED -> State.READY
+			Shizuku.shouldShowRequestPermissionRationale() -> State.DENIED
+			else -> State.NO_PERMISSION
+		}
+	} catch (_: Throwable) { State.NOT_RUNNING }
+
 	/** True if Shizuku is running and this app has been granted permission */
 	fun isReady(): Boolean = try {
 		Shizuku.pingBinder() && !Shizuku.isPreV11() &&
@@ -27,7 +39,8 @@ object ShizukuHelper {
 	} catch (_: Throwable) { false }
 
 	/** Shows Shizuku's permission prompt if Shizuku is running and permission isn't granted yet */
-	fun requestPermissionIfNeeded() {
+	fun requestPermissionIfNeeded(force: Boolean = false) {
+		if (!force && App.prefs?.useShizuku == false) return
 		try {
 			if (Shizuku.pingBinder() && !Shizuku.isPreV11() &&
 				Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED &&

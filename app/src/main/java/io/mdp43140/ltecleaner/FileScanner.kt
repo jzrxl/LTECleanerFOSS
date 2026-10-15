@@ -209,7 +209,7 @@ class FileScanner(private val path: File, context: Context){
 
 	fun start(): Long {
 		isRunning = true
-		shizuku = ShizukuHelper.get(context) // null if Shizuku isn't running/granted
+		shizuku = if (prefs.useShizuku) ShizukuHelper.get(context) else null // null if off, not running or not allowed
 		var cycles: Byte = 0
 		val maxCycles: Byte = if (delete) prefs.multiRun.toByte() else 1
 
