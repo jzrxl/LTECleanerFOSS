@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -83,22 +84,14 @@ class MainActivity: AppCompatActivity(){
 		grantResults:IntArray
 	){
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-		if (
-			Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+		val isStorageRequest =
 			permissions.contains("android.permission.READ_EXTERNAL_STORAGE") &&
 			permissions.contains("android.permission.WRITE_EXTERNAL_STORAGE") &&
-			permissions.contains("android.permission.MANAGE_EXTERNAL_STORAGE")){
-			// Since Android 13, external storage access wasnt longer a thing anymore
-			Snackbar.make(
-				binding.root,
-				"Sadly, Android 13+ no longer have access to external storage",
-				Snackbar.LENGTH_SHORT
-			).let {
-				it.setAction(android.R.string.ok){ _: View ->
-					it.dismiss()
-				}
-				it.show()
-			}
+			permissions.contains("android.permission.MANAGE_EXTERNAL_STORAGE")
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && isStorageRequest){
+			// Android 13+ denies READ/WRITE_EXTERNAL_STORAGE automatically; "all files access" still
+			// covers normal storage, only Android/data and Android/obb need Shizuku
+			showShizukuHint()
 		}
 		else if (
 			requestCode == 1 &&
@@ -113,5 +106,27 @@ class MainActivity: AppCompatActivity(){
 					dialogInterface.dismiss()
 				}
 				.show()
+		else if (requestCode == 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && isStorageRequest)
+			showShizukuHint()
+	}
+
+	/**
+	 * Android 11+ blocks Android/data and Android/obb for normal apps, Shizuku gets around that.
+	 * Shows a small, non-sticky hint with a button that walks the user through setup. Only on
+	 * Android 11+, only while Shizuku isn't ready, and only a couple of times so it doesn't nag.
+	 */
+	private fun showShizukuHint(){
+		val prefs = App.prefs ?: return
+		if (!prefs.useShizuku || prefs.shizukuHintCount >= 2) return
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) return // still granting all files access
+		if (ShizukuHelper.state() == ShizukuHelper.State.READY) return
+		prefs.shizukuHintCount = prefs.shizukuHintCount + 1
+		Snackbar.make(binding.root, R.string.shizuku_hint, Snackbar.LENGTH_LONG).let {
+			it.setAction(R.string.shizuku_setup){ _: View ->
+				prefs.shizukuHintCount = 99 // they know where setup is now, stop reminding
+				ShizukuHelper.startSetup(this)
+			}
+			it.show()
+		}
 	}
 }

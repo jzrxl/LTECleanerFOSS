@@ -45,6 +45,8 @@ class PreferenceRepository(ctx: Context){
 		private const val theme_key = "theme"
 		private const val useShizuku_key = "use_shizuku"
 		private const val useShizuku_defVal = true
+		private const val shizukuHintCount_key = "shizuku_hint_count"
+		private const val shizukuHintCount_defVal = 0
 		private const val theme_defVal = "auto"
 		private const val whitelist_key = "whitelist"
 		private var whitelist_defVal = Constants.whitelistDefault
@@ -108,6 +110,9 @@ class PreferenceRepository(ctx: Context){
 	var useShizuku: Boolean
 		get() = prefs.getBoolean(useShizuku_key,useShizuku_defVal)
 		set(v) = prefs.edit().putBoolean(useShizuku_key,v).apply()
+	var shizukuHintCount: Int
+		get() = prefs.getInt(shizukuHintCount_key,shizukuHintCount_defVal)
+		set(v) = prefs.edit().putInt(shizukuHintCount_key,v).apply()
 	var whitelist: Set<String>
 		get() = prefs.getStringSet(whitelist_key,whitelist_defVal) ?: whitelist_defVal
 		set(v) = prefs.edit().putStringSet(whitelist_key,v).apply()

@@ -4,6 +4,8 @@
 package io.mdp43140.ltecleaner
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.IBinder
@@ -47,6 +49,24 @@ object ShizukuHelper {
 				!Shizuku.shouldShowRequestPermissionRationale()
 			) Shizuku.requestPermission(REQUEST_CODE)
 		} catch (_: Throwable) {}
+	}
+
+	/** Opens the Shizuku app so the user can start it / allow this app, or its download page if it isn't installed */
+	fun openShizukuOrDownload(context: Context) {
+		val launch = context.packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
+		val intent = launch ?: Intent(Intent.ACTION_VIEW, Uri.parse("https://shizuku.rikka.app/download/"))
+		try {
+			context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+		} catch (_: Throwable) {}
+	}
+
+	/** Does whatever the next setup step is: allow this app if Shizuku is running, otherwise open Shizuku */
+	fun startSetup(context: Context) {
+		when (state()) {
+			State.READY -> {}
+			State.NO_PERMISSION -> requestPermissionIfNeeded(true)
+			else -> openShizukuOrDownload(context)
+		}
 	}
 
 	/** Android/data and Android/obb (Android 11+ blocks these for normal apps, even with all-files access) */

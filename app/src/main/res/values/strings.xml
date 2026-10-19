@@ -42,6 +42,8 @@
 	<string name="shizuku_status_denied">Permission was denied. In Shizuku, open Authorized apps and allow this app. Tap to open Shizuku</string>
 	<string name="shizuku_status_not_running">Shizuku isn\'t running. Start it, then come back. Tap to open Shizuku</string>
 	<string name="shizuku_not_installed">Shizuku isn\'t installed</string>
+	<string name="shizuku_hint">Android/data and Android/obb can only be cleaned with Shizuku</string>
+	<string name="shizuku_setup">Set up</string>
 	<string name="clean_boot_title">Clean on boot</string>
 	<string name="clean_boot_sum">Automatically runs when device completed boot, without having to open the app.</string>
 	<string name="clean_hourly_title">Hourly Clean</string>

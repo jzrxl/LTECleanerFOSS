@@ -168,9 +168,7 @@ class SettingsFragment: PreferenceFragmentCompat(){
 		})
 	}
 	private fun openShizukuApp(){
-		val intent = requireContext().packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
-		if (intent != null) startActivity(intent)
-		else Toast.makeText(requireContext(), R.string.shizuku_not_installed, Toast.LENGTH_SHORT).show()
+		ShizukuHelper.openShizukuOrDownload(requireContext())
 	}
 	override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 		setPreferencesFromResource(R.xml.preferences,rootKey)
